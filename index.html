@@ -180,6 +180,12 @@ nav.tabs button{position:relative;z-index:1}
 .okbox b{display:flex;align-items:center;gap:8px;font-size:15.5px;margin-bottom:3px;font-weight:800}
 .foot{font-size:12px;color:var(--soft);text-align:center;margin-top:16px;line-height:1.45;font-weight:600}
 
+/* name */
+.nameinput{width:100%;height:64px;border-radius:20px;background:#fff;padding:0 20px;font-size:22px;font-weight:800;letter-spacing:-.4px;outline:none;box-shadow:0 1px 2px rgba(23,18,26,.06),inset 0 0 0 2px transparent;transition:box-shadow .2s}
+.nameinput:focus{box-shadow:0 8px 24px -12px rgba(122,31,43,.35),inset 0 0 0 2px var(--wine)}
+.nameinput::placeholder{color:#C9C2CD;font-weight:700}
+.bigav{width:96px;height:96px;border-radius:32px;background:var(--grad);color:#fff;font-weight:800;font-size:42px;display:flex;align-items:center;justify-content:center;margin:26px 0 22px;box-shadow:0 18px 36px -16px rgba(122,31,43,.7);letter-spacing:-1px}
+.bigav.empty{background:#E9E5EC;color:#B9B1BD;box-shadow:none}
 /* ---------- motion ---------- */
 .blob{position:absolute;border-radius:50%;filter:blur(46px);opacity:.6;pointer-events:none}
 .b1{width:280px;height:280px;background:#E36A7A;top:-80px;right:-90px;animation:float1 11s ease-in-out infinite alternate}
@@ -361,6 +367,9 @@ function fitText(s){
   if(after) t+=`Your next class starts at ${fmt(after.s)}. `;
   return t+'No clash with your timetable.';
 }
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+const nm=()=>esc((S.name||'').trim()||'there');
+const ini=n=>{n=(n||'').trim();return n?esc(n[0].toUpperCase()):'?'};
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function countUps(root){(root||document).querySelectorAll('[data-count]').forEach(el=>{const to=+el.dataset.count,suf=el.dataset.suf||'',f=el.dataset.eur?eur:(v=>Math.round(v)+'');if(RM){el.textContent=f(to)+suf;return}const t0=performance.now(),D=950;const st=n=>{const u=Math.min(1,(n-t0)/D),e=1-Math.pow(1-u,3);el.textContent=f(to*e)+suf;if(u<1)requestAnimationFrame(st)};requestAnimationFrame(st)})}
 function celebrate(s){
@@ -392,7 +401,7 @@ const okIc=`<span class="ck" style="background:var(--ok);width:30px;height:30px"
 const boltIc=`<span class="ck" style="background:#F2A900;width:30px;height:30px">${sv(P.bolt,16,'#fff')}</span>`;
 
 /* ---------- onboarding ---------- */
-let obStep=0, obUni=null;
+let obStep=0, obUni=null, obName='';
 function renderOB(){
   const o=$('ob');
   if(S.onboarded){o.innerHTML='';return}
@@ -405,18 +414,32 @@ function renderOB(){
         <div class="fade" style="font-size:16.5px;margin:10px 0 18px;opacity:.82;font-weight:500;line-height:1.45;animation-delay:.26s">ShiftMate shows student jobs that never clash with your classes or exams.</div>
 
       </div>
-      <button class="btn light fade" style="animation-delay:.34s;position:relative" onclick="obStep=1;renderOB()">Get started</button>
+      <button class="btn light fade" style="animation-delay:.34s;position:relative" onclick="obStep=1;renderOB();focusName()">Get started</button>
       <div class="foot" style="color:rgba(255,255,255,.65);position:relative"><span class="demo">Prototype</span><br>Research prototype with demo data. No real accounts or payments.</div>
     </div>`;
   } else if(obStep===1){
     o.innerHTML=`<div class="ob">
       <button class="iconbtn" onclick="obStep=0;renderOB()">${sv(P.back,22,'#17121A',2.4)}</button>
-      <div class="h1 fade" style="margin-top:18px">Connect your<br>university timetable</div>
+      <div style="flex:1">
+        <div class="bigav ${obName.trim()?'':'empty'} fade" id="obav">${ini(obName)}</div>
+        <div class="h1 fade" style="animation-delay:.05s">What should<br>we call you?</div>
+        <div class="mut fade" style="margin:10px 0 20px;line-height:1.45;font-weight:500;animation-delay:.1s">ShiftMate uses your name in the app. It is only saved on this phone.</div>
+        <input class="nameinput fade" id="obname" style="animation-delay:.15s" maxlength="20" placeholder="Your first name" autocomplete="given-name" autocapitalize="words" enterkeyhint="next" value="${esc(obName)}">
+      </div>
+      <button class="btn" id="obnext" ${obName.trim()?'':'disabled'} onclick="nameNext()">Continue</button>
+    </div>`;
+    const inp=$('obname');
+    inp.oninput=()=>{obName=inp.value;const t=obName.trim(),a=$('obav');a.textContent=t?t[0].toUpperCase():'?';a.classList.toggle('empty',!t);if(t){a.classList.remove('popin');void a.offsetWidth;a.classList.add('popin')}$('obnext').disabled=!t};
+    inp.onkeydown=e=>{if(e.key==='Enter'&&obName.trim()) nameNext()};
+  } else if(obStep===2){
+    o.innerHTML=`<div class="ob">
+      <button class="iconbtn" onclick="obStep=1;renderOB()">${sv(P.back,22,'#17121A',2.4)}</button>
+      <div class="eyebrow fade" style="margin-top:18px;color:var(--wine)">Nice to meet you, ${esc(obName.trim())}</div><div class="h1 fade" style="margin-top:4px;animation-delay:.03s">Connect your<br>university timetable</div>
       <div class="mut fade" style="margin:10px 0 20px;line-height:1.45;font-weight:500;animation-delay:.05s">ShiftMate imports your lectures, tutorials and exams automatically and keeps them up to date.</div>
       <div style="flex:1;overflow-y:auto">
         ${UNIS.map((u,i)=>`<button class="opt fade ${obUni===i?'on':''}" style="animation-delay:${.08+i*.04}s" onclick="pickUni(${i})"><span class="sq" style="width:40px;height:40px;border-radius:13px;background:#fff">${sv(P.grad,20,'#7A1F2B')}</span><span style="flex:1">${u}</span><span class="radio"></span></button>`).join('')}
       </div>
-      <button class="btn" ${obUni===null?'disabled':''} onclick="obStep=2;renderOB();runConnect()">Connect with student account</button>
+      <button class="btn" ${obUni===null?'disabled':''} onclick="obStep=3;renderOB();runConnect()">Connect with student account</button>
       <div class="foot">Demo: no login data is asked for or stored.</div>
     </div>`;
   } else {
@@ -436,6 +459,8 @@ function renderOB(){
     </div>`;
   }
 }
+window.focusName=()=>setTimeout(()=>{const i=$('obname');if(i)i.focus()},350);
+window.nameNext=()=>{if(!obName.trim())return;document.activeElement&&document.activeElement.blur();obStep=2;renderOB()};
 window.pickUni=i=>{obUni=i;renderOB();document.querySelectorAll('.opt').forEach(o=>o.classList.remove('fade'))};
 window.renderOB=renderOB;
 Object.defineProperty(window,'obStep',{get:()=>obStep,set:v=>obStep=v});
@@ -444,7 +469,7 @@ window.runConnect=function(){
   li.forEach((l,i)=>setTimeout(()=>{if(i>0){li[i-1].className='done';li[i-1].querySelector('.ck').innerHTML=sv(P.check,15,'#fff',3)}l.className='busy'},i*750));
   setTimeout(()=>{const l=li[li.length-1];l.className='done';l.querySelector('.ck').innerHTML=sv(P.check,15,'#fff',3);const d=$('csdone');$('trk').classList.add('done');d.style.opacity=1;d.style.transform='none';$('csbtn').disabled=false},li.length*750);
 };
-window.finishOB=function(){S.onboarded=true;S.uni=obUni;save();renderOB();render();setTimeout(urgentAlert,900)};
+window.finishOB=function(){S.onboarded=true;S.uni=obUni;S.name=obName.trim().slice(0,20);save();renderOB();render();setTimeout(urgentAlert,900)};
 function urgentAlert(){
   if(S.urgentSeen||!S.alerts||S.accepted.includes('s3')) return;
   const s=byId('s3'); S.urgentSeen=true; save();
@@ -480,8 +505,8 @@ function jobCard(s,i){
     </div></button>`;
 }
 function vShifts(){
-  $('hdr').innerHTML=`<div class="row"><div><div class="eyebrow">Wednesday, 2 December</div><div class="h1">Hi, Max</div></div><div class="sp"></div>
-    <button class="iconbtn" onclick="go('mine')">${sv(P.bell,21,'#17121A')}<i></i></button><button class="avatar" onclick="go('me')">M</button></div>`;
+  $('hdr').innerHTML=`<div class="row"><div><div class="eyebrow">Wednesday, 2 December</div><div class="h1">Hi, ${nm()}</div></div><div class="sp"></div>
+    <button class="iconbtn" onclick="go('mine')">${sv(P.bell,21,'#17121A')}<i></i></button><button class="avatar" onclick="go('me')">${ini(S.name)}</button></div>`;
   const vis=visible(), pot=vis.reduce((a,s)=>a+pay(s),0);
   $('main').innerHTML=`
     <div class="hero fade"><span class="shine"></span><div class="lbl">You could earn this week</div><div class="num" data-count="${pot}" data-eur="1">${eur(pot)}</div>
@@ -562,7 +587,7 @@ window.openSwap=function(id){
 function runSwap(id){
   const sh=$('sheet');
   sh.innerHTML=`<div class="grab"></div><div class="h2" style="font-size:20px;text-align:center">Looking for a swap…</div>
-   <div class="swapg"><div class="av" style="background:var(--grad)">M</div><span id="swi" class="spin" style="display:inline-flex">${sv(P.refresh,26,'#A29BA7',2.2)}</span><div class="av" id="swb2" style="background:#E6E1E9;color:#A29BA7">?</div></div>
+   <div class="swapg"><div class="av" style="background:var(--grad)">${ini(S.name)}</div><span id="swi" class="spin" style="display:inline-flex">${sv(P.refresh,26,'#A29BA7',2.2)}</span><div class="av" id="swb2" style="background:#E6E1E9;color:#A29BA7">?</div></div>
    <ul class="steps" style="margin:10px 0 14px" id="sw"><li class="busy"><span class="ck"></span>Notifying 3 verified students who are free</li><li><span class="ck"></span>Waiting for a student to accept</li></ul>
    <div id="swd" class="okbox" style="opacity:0;transition:opacity .4s;margin-bottom:14px"><b>${sv(P.checkc,20,'#0B6E61')}Shift swapped</b>Sanne, a verified student, takes over your shift. The employer has been informed.</div>
    <button class="btn" id="swb" disabled>Done</button>`;
@@ -660,7 +685,7 @@ function vMe(){
   const u=S.uni!==null?UNIS[S.uni]:'Not connected';
   const ico=(d,bg,c)=>`<span class="sq" style="width:40px;height:40px;border-radius:13px;background:${bg}">${sv(d,20,c)}</span>`;
   $('main').innerHTML=`
-   <div class="card fade row" style="gap:14px"><div class="avatar" style="width:60px;height:60px;border-radius:20px;font-size:24px">M</div><div style="flex:1"><div style="font-weight:800;font-size:19px;letter-spacing:-.3px">Max</div><div class="row" style="gap:6px;margin-top:2px"><span class="tag ok" style="padding:4px 9px">${sv(P.shield,13,'#0E8F7E',2.2)}Verified student</span></div></div></div>
+   <div class="card fade row" style="gap:14px"><div class="avatar" style="width:60px;height:60px;border-radius:20px;font-size:24px">${ini(S.name)}</div><div style="flex:1"><div style="font-weight:800;font-size:19px;letter-spacing:-.3px">${esc((S.name||'').trim()||'Student')}</div><div class="row" style="gap:6px;margin-top:2px"><span class="tag ok" style="padding:4px 9px">${sv(P.shield,13,'#0E8F7E',2.2)}Verified student</span></div></div><button class="pill" style="height:38px" onclick="editName()">Edit</button></div>
    <div class="group fade" style="animation-delay:.05s">
      <div class="set">${ico(P.grad,'#F8E9EC','#7A1F2B')}<div style="flex:1"><b>University timetable</b><span>${u}</span></div><button class="pill" style="height:36px" onclick="syncNow()">${syncing?'Syncing…':'Sync'}</button></div>
      <div class="set">${ico(P.moon,'#F1EAFE','#7A3FD1')}<div style="flex:1"><b>Exam pause</b><span>No shift suggestions on exam days</span></div><button class="toggle ${S.examPause?'on':''}" onclick="tg('examPause')"></button></div>
@@ -673,14 +698,27 @@ function vMe(){
    <button class="btn ghost" style="margin-top:8px" onclick="resetDemo()">Reset demo</button>
    <div class="foot">ShiftMate prototype for a university research project.<br>All employers, shifts and ratings are demo data.</div>`;
 }
+window.editName=function(first){
+  const sh=$('sheet');let v=S.name||'';
+  sh.innerHTML=`<div class="grab"></div><div class="h2" style="font-size:21px">${first?'What should we call you?':'Change your name'}</div>
+   <div class="mut" style="margin:6px 0 16px;font-weight:500;line-height:1.45">Your name is only saved on this phone.</div>
+   <input class="nameinput" id="ednm" maxlength="20" placeholder="Your first name" autocomplete="given-name" autocapitalize="words" enterkeyhint="done" value="${esc(v)}">
+   <button class="btn" id="edok" style="margin-top:14px" ${v.trim()?'':'disabled'}>Save</button>${first?'':'<button class="btn ghost" onclick="closeSheet()">Cancel</button>'}`;
+  const i=$('ednm'),ok=$('edok');
+  i.oninput=()=>{v=i.value;ok.disabled=!v.trim()};
+  const doSave=()=>{if(!v.trim())return;S.name=v.trim().slice(0,20);save();i.blur();closeSheet();render();toast(`<b>Hi, ${nm()}!</b><br>Your name has been saved.`,okIc)};
+  ok.onclick=doSave; i.onkeydown=e=>{if(e.key==='Enter')doSave()};
+  openSheet(); if(first) $('dim').onclick=null;
+  setTimeout(()=>i.focus(),400);
+};
 window.tg=k=>{S[k]=!S[k];save();vMe();if(k==='examPause') toast(S.examPause?'<b>Exam pause on</b><br>No shift suggestions on exam days.':'<b>Exam pause off</b>',okIc)};
 window.joinPlus=()=>{S.plus=true;save();vMe();toast('<b>You are on the waitlist</b><br>We will let you know when Plus launches.',okIc)};
 window.syncNow=()=>{syncing=true;vMe();setTimeout(()=>{syncing=false;vMe();toast('<b>Timetable up to date</b><br>No changes this week.',okIc)},1300)};
-window.resetDemo=()=>{try{localStorage.removeItem('shiftmate')}catch(e){} S=Object.assign({},DEF);obStep=0;obUni=null;query='';closePage();closeSheet();renderOB();render()};
+window.resetDemo=()=>{try{localStorage.removeItem('shiftmate')}catch(e){} S=Object.assign({},DEF);obStep=0;obUni=null;obName='';query='';closePage();closeSheet();renderOB();render()};
 
 /* ---------- start ---------- */
 renderOB(); render();
-if(S.onboarded) setTimeout(urgentAlert,800);
+if(S.onboarded&&!S.name) setTimeout(()=>editName(true),500); else if(S.onboarded) setTimeout(urgentAlert,800);
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 }
 </script>
