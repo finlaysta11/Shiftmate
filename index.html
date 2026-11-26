@@ -37,7 +37,7 @@ header.top{padding:calc(env(safe-area-inset-top) + 16px) 18px 12px}
 .sp{flex:1}
 .fade{animation:up .5s cubic-bezier(.2,.8,.2,1) both}
 @keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.fade{animation:none}*{transition:none!important}}
+
 .iconbtn{width:44px;height:44px;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 1px 2px rgba(23,18,26,.06)}
 .iconbtn i{position:absolute;top:10px;right:11px;width:8px;height:8px;border-radius:50%;background:var(--rose);border:2px solid #fff}
 .avatar{width:44px;height:44px;border-radius:16px;background:var(--grad);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:17px}
@@ -75,7 +75,9 @@ header.top{padding:calc(env(safe-area-inset-top) + 16px) 18px 12px}
 .tag.ok{background:var(--okL);color:var(--ok)}
 .tag.amb{background:var(--ambL);color:var(--amb)}
 .tag.wine{background:var(--wineL);color:var(--wine)}
-.urg{position:relative;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#F7B23B,#E36A7A) border-box;border:2px solid transparent}
+.urg{position:relative;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(120deg,#F7B23B,#E36A7A,#F7B23B,#E36A7A,#F7B23B) border-box;background-size:100% 100%,300% 300%;border:2px solid transparent;animation:borderflow 5s linear infinite}
+.urg.fade{animation:up .5s cubic-bezier(.2,.8,.2,1) both,borderflow 5s linear infinite}
+@keyframes borderflow{to{background-position:0 0,100% 100%}}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block}
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:56px;border-radius:18px;background:var(--grad);color:#fff;font-weight:800;font-size:16.5px;letter-spacing:-.2px;box-shadow:0 12px 26px -12px rgba(122,31,43,.7)}
 .btn.light{background:#fff;color:var(--wine);box-shadow:none}
@@ -89,7 +91,7 @@ nav.tabs{position:absolute;left:14px;right:14px;bottom:calc(env(safe-area-inset-
 nav.tabs button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:700;color:var(--soft)}
 nav.tabs .ti{width:46px;height:32px;border-radius:12px;display:flex;align-items:center;justify-content:center;transition:background .2s}
 nav.tabs button.on{color:var(--wine)}
-nav.tabs button.on .ti{background:var(--wineL)}
+nav.tabs button{position:relative;z-index:1}
 /* detail page */
 .page{position:absolute;inset:0;background:var(--bg);z-index:20;display:flex;flex-direction:column;transform:translateX(100%);visibility:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),visibility 0s linear .35s}
 .page.show{transform:none;visibility:visible;transition:transform .35s cubic-bezier(.2,.8,.2,1),visibility 0s}
@@ -177,6 +179,80 @@ nav.tabs button.on .ti{background:var(--wineL)}
 .okbox{background:var(--okL);border-radius:20px;padding:14px 16px;color:#0B6E61;font-size:14.5px;line-height:1.45;font-weight:600}
 .okbox b{display:flex;align-items:center;gap:8px;font-size:15.5px;margin-bottom:3px;font-weight:800}
 .foot{font-size:12px;color:var(--soft);text-align:center;margin-top:16px;line-height:1.45;font-weight:600}
+
+/* ---------- motion ---------- */
+.blob{position:absolute;border-radius:50%;filter:blur(46px);opacity:.6;pointer-events:none}
+.b1{width:280px;height:280px;background:#E36A7A;top:-80px;right:-90px;animation:float1 11s ease-in-out infinite alternate}
+.b2{width:260px;height:260px;background:#2E0710;bottom:40px;left:-110px;animation:float2 13s ease-in-out infinite alternate}
+@keyframes float1{to{transform:translate(-70px,90px) scale(1.15)}}
+@keyframes float2{to{transform:translate(80px,-70px) scale(1.2)}}
+.bob{animation:bob 4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-3deg)}}
+.mg{position:relative;border-radius:26px;background:rgba(255,255,255,.1);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16);padding:14px 14px 12px;margin:22px 0 2px}
+.mg-days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+.mg-dl{text-align:center;font-size:11px;font-weight:700;opacity:.7;margin-bottom:6px}
+.mg-col{position:relative;height:128px;border-radius:12px;background:rgba(255,255,255,.07)}
+.mg-b{position:absolute;left:4px;right:4px;border-radius:7px}
+.mg-c{background:rgba(255,255,255,.9);animation:mgCls 7.5s infinite both}
+.mg-x{background:repeating-linear-gradient(-45deg,rgba(255,255,255,.6) 0 4px,rgba(255,255,255,.22) 4px 8px);animation:mgCls 7.5s infinite both}
+.mg-s{background:linear-gradient(135deg,#46D6BF,#13A08C);animation:mgShift 7.5s infinite both}
+.mg-sel{animation:mgShift 7.5s infinite both,mgSel 7.5s infinite both}
+.mg-chk{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;animation:mgCheck 7.5s infinite both}
+.mg-coin{position:absolute;right:12px;top:-12px;background:#fff;color:#0E8F7E;font-weight:800;font-size:13px;padding:6px 11px;border-radius:12px;box-shadow:0 10px 22px -8px rgba(0,0,0,.4);animation:mgCoin 7.5s infinite both}
+.mg-cap{position:relative;height:24px;margin-top:12px;font-size:14px;font-weight:700}
+.mg-cap span{position:absolute;inset:0;display:flex;align-items:center;gap:9px;opacity:0}
+.mg-cap span:nth-child(1){animation:cap1 7.5s infinite}
+.mg-cap span:nth-child(2){animation:cap2 7.5s infinite}
+.mg-cap span:nth-child(3){animation:cap3 7.5s infinite}
+.mg-cap b{width:22px;height:22px;border-radius:8px;background:rgba(255,255,255,.2);font-size:12px;display:inline-flex;align-items:center;justify-content:center}
+@keyframes mgCls{0%{opacity:0;transform:scaleY(.3)}8%,93%{opacity:1;transform:none}100%{opacity:0}}
+@keyframes mgShift{0%,30%{opacity:0;transform:translateY(-16px) scale(.85)}38%{opacity:1;transform:translateY(3px) scale(1.03)}43%,93%{opacity:1;transform:none}100%{opacity:0;transform:none}}
+@keyframes mgSel{0%,64%{box-shadow:0 0 0 0 rgba(255,255,255,0)}70%,93%{box-shadow:0 0 0 3px #fff}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+@keyframes mgCheck{0%,64%{opacity:0;transform:scale(.2)}70%{opacity:1;transform:scale(1.25)}74%,93%{opacity:1;transform:scale(1)}100%{opacity:0}}
+@keyframes mgCoin{0%,68%{opacity:0;transform:translateY(14px) scale(.8)}74%{opacity:1;transform:none}88%{opacity:1;transform:translateY(-8px)}96%,100%{opacity:0;transform:translateY(-16px)}}
+@keyframes cap1{0%{opacity:0;transform:translateY(8px)}4%,29%{opacity:1;transform:none}33%,100%{opacity:0;transform:translateY(-8px)}}
+@keyframes cap2{0%,33%{opacity:0;transform:translateY(8px)}37%,62%{opacity:1;transform:none}66%,100%{opacity:0;transform:translateY(-8px)}}
+@keyframes cap3{0%,66%{opacity:0;transform:translateY(8px)}70%,94%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-8px)}}
+.sync{display:flex;align-items:center;gap:12px;margin:26px 0 4px}
+.sync .sq{width:58px;height:58px;border-radius:19px;flex:none}
+.track{flex:1;height:4px;border-radius:2px;background:#E6E1E9;position:relative}
+.track i{position:absolute;top:-3px;left:0;width:10px;height:10px;border-radius:50%;background:var(--ok);animation:flow 1.4s linear infinite}
+.track i:nth-child(2){animation-delay:.47s}.track i:nth-child(3){animation-delay:.94s}
+@keyframes flow{0%{left:0;opacity:0}15%,85%{opacity:1}100%{left:calc(100% - 10px);opacity:0}}
+.track.done{background:var(--ok);transition:background .4s}.track.done i{animation:none;opacity:0}
+.hero>.shine{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.2) 50%,transparent 65%);transform:translateX(-130%);animation:shine 6s ease-in-out 1.2s infinite}
+@keyframes shine{0%{transform:translateX(-130%)}22%,100%{transform:translateX(130%)}}
+.pulse{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.3)}}
+.ind{position:absolute;top:8px;left:6px;height:54px;width:calc((100% - 12px)/5);border-radius:19px;background:var(--wineL);transition:transform .5s cubic-bezier(.3,1.3,.4,1)}
+.bump{animation:bump .5s cubic-bezier(.3,1.4,.4,1)}
+@keyframes bump{40%{transform:translateY(-4px) scale(1.15)}}
+.celeb{position:absolute;inset:0;z-index:70;pointer-events:none;overflow:hidden}
+.conf{position:absolute;top:-24px;width:9px;height:15px;border-radius:3px;animation:fall var(--t) cubic-bezier(.25,.6,.4,1) var(--dl) both}
+@keyframes fall{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--x),105vh) rotate(var(--r));opacity:.85}}
+.cbadge{position:absolute;left:50%;top:42%;opacity:0;background:#fff;border-radius:32px;padding:26px 34px 22px;text-align:center;box-shadow:0 30px 60px -18px rgba(23,18,26,.5);animation:badge 2.1s cubic-bezier(.2,.8,.2,1) both;min-width:230px}
+@keyframes badge{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}16%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}24%,82%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.92)}}
+.draw{stroke-dasharray:40;stroke-dashoffset:40;animation:draw .5s .3s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.swapg{display:flex;align-items:center;justify-content:center;gap:16px;margin:16px 0 4px}
+.swapg .av{width:56px;height:56px;border-radius:19px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:21px;color:#fff;transition:background .4s,transform .4s}
+.spin{animation:spin 1.1s linear infinite}
+.popin{animation:popin .5s cubic-bezier(.3,1.5,.4,1)}
+@keyframes popin{0%{transform:scale(.5)}100%{transform:scale(1)}}
+.pop{animation:pop .5s cubic-bezier(.2,.8,.2,1) both}
+@keyframes pop{from{opacity:0;transform:translateX(-12px)}}
+.now:before{animation:nowp 1.8s ease-out infinite}
+@keyframes nowp{0%{box-shadow:0 0 0 0 rgba(227,106,122,.6)}100%{box-shadow:0 0 0 11px rgba(227,106,122,0)}}
+.bars i{transform-origin:bottom;animation:grow .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{transform:scaleY(0)}}
+.ring{animation:ringIn 1.2s cubic-bezier(.2,.8,.2,1) .15s both}
+@keyframes ringIn{from{stroke-dashoffset:var(--c)}}
+.daybar i{animation:fadein .5s ease both}
+.daybar i.sh{transform-origin:left;animation:growx .9s cubic-bezier(.2,.8,.2,1) .35s both}
+@keyframes growx{from{transform:scaleX(0)}}
+@keyframes fadein{from{opacity:0}}
+.meter i{transform-origin:left;animation:growx 1s cubic-bezier(.2,.8,.2,1) .3s both}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.mg-cap span:nth-child(2){opacity:1}}
 </style>
 </head>
 <body>
@@ -285,6 +361,31 @@ function fitText(s){
   if(after) t+=`Your next class starts at ${fmt(after.s)}. `;
   return t+'No clash with your timetable.';
 }
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function countUps(root){(root||document).querySelectorAll('[data-count]').forEach(el=>{const to=+el.dataset.count,suf=el.dataset.suf||'',f=el.dataset.eur?eur:(v=>Math.round(v)+'');if(RM){el.textContent=f(to)+suf;return}const t0=performance.now(),D=950;const st=n=>{const u=Math.min(1,(n-t0)/D),e=1-Math.pow(1-u,3);el.textContent=f(to*e)+suf;if(u<1)requestAnimationFrame(st)};requestAnimationFrame(st)})}
+function celebrate(s){
+  if(RM) return;
+  const cols=['#E36A7A','#F7B23B','#13A08C','#7A1F2B','#7A3FD1','#46D6BF'];
+  const c=document.createElement('div');c.className='celeb';
+  let h='';for(let i=0;i<46;i++){h+=`<i class="conf" style="left:${Math.random()*100}%;background:${cols[i%cols.length]};--x:${(Math.random()*120-60).toFixed(0)}px;--r:${(Math.random()*720-360).toFixed(0)}deg;--t:${(1.6+Math.random()*1.2).toFixed(2)}s;--dl:${(Math.random()*.35).toFixed(2)}s;${i%3===0?'border-radius:50%;width:10px;height:10px':''}"></i>`}
+  h+=`<div class="cbadge"><svg width="70" height="70" viewBox="0 0 70 70"><circle cx="35" cy="35" r="33" fill="#13A08C"/><path class="draw" d="M22 36 31 45 49 26" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   <div style="font-weight:800;font-size:20px;margin-top:10px;letter-spacing:-.3px">Shift accepted</div><div style="font-weight:800;font-size:26px;color:#0E8F7E;letter-spacing:-.6px">+${eur(pay(s))}</div><div class="mut" style="font-size:13.5px;font-weight:600;margin-top:2px">${s.role} · ${dayLabel(s.d)} ${fmt(s.s)}–${fmt(s.e)}</div></div>`;
+  c.innerHTML=h;$('app').appendChild(c);setTimeout(()=>c.remove(),3000);
+}
+function mgHTML(){
+  const PH=128/14,top=h=>((h-8)*PH).toFixed(1)+'px',ht=(a,b)=>((b-a)*PH).toFixed(1)+'px';
+  const C=[[0,9,12],[0,13,15],[1,10,13],[2,9,11],[2,14,17],[3,11,13]],X=[4,10,12],SH=[[0,17,22],[1,14,18],[2,17.5,21.5,1],[3,17,21]];
+  let cols='';
+  for(let d=0;d<5;d++){
+    let b='';
+    C.filter(c=>c[0]===d).forEach((c,i)=>b+=`<i class="mg-b mg-c" style="top:${top(c[1])};height:${ht(c[1],c[2])};animation-delay:${(d*.06+i*.05).toFixed(2)}s"></i>`);
+    if(d===X[0]) b+=`<i class="mg-b mg-x" style="top:${top(X[1])};height:${ht(X[1],X[2])};animation-delay:.3s"></i>`;
+    SH.filter(x=>x[0]===d).forEach(x=>b+=`<i class="mg-b ${x[3]?'mg-s mg-sel':'mg-s'}" style="top:${top(x[1])};height:${ht(x[1],x[2])};animation-delay:${(d*.08).toFixed(2)}s">${x[3]?`<span class="mg-chk">${sv(P.check,12,'#0E8F7E',3.4)}</span>`:''}</i>`);
+    cols+=`<div><div class="mg-dl">${DAYS[d]}</div><div class="mg-col">${b}</div></div>`;
+  }
+  return `<div class="mg fade" style="animation-delay:.1s"><span class="mg-coin">+€68.00</span><div class="mg-days">${cols}</div>
+    <div class="mg-cap"><span><b>1</b>Your timetable is imported</span><span><b>2</b>Shifts appear only in your free time</span><span><b>3</b>Accept in one tap and get paid</span></div></div>`;
+}
 let toastT;
 function toast(msg,ic){const t=$('toast');t.innerHTML=(ic||'')+'<span>'+msg+'</span>';t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2800)}
 const okIc=`<span class="ck" style="background:var(--ok);width:30px;height:30px">${sv(P.check,16,'#fff',3)}</span>`;
@@ -296,15 +397,16 @@ function renderOB(){
   const o=$('ob');
   if(S.onboarded){o.innerHTML='';return}
   if(obStep===0){
-    o.innerHTML=`<div class="ob dark">
-      <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
-        <div class="fade" style="width:84px;height:84px;filter:drop-shadow(0 14px 26px rgba(0,0,0,.35))">${LOGO}</div>
-        <div class="fade h1" style="font-size:40px;margin-top:26px;letter-spacing:-1.4px;animation-delay:.06s">Work that fits<br>your timetable.</div>
-        <div class="fade" style="font-size:17px;margin:10px 0 26px;opacity:.82;font-weight:500;line-height:1.45;animation-delay:.12s">ShiftMate shows student jobs that never clash with your classes or exams.</div>
-        ${[[P.cal,'Connect your university timetable once'],[P.checkc,'See only shifts in your free time'],[P.swap,'Accept or swap shifts in one tap']].map((f,i)=>`<div class="feat fade" style="animation-delay:${.18+i*.07}s"><div class="sq">${sv(f[0],20,'#fff')}</div>${f[1]}</div>`).join('')}
+    o.innerHTML=`<div class="ob dark" style="overflow:hidden"><i class="blob b1"></i><i class="blob b2"></i>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;position:relative">
+        <div class="row fade"><div class="bob" style="width:52px;height:52px;filter:drop-shadow(0 12px 22px rgba(0,0,0,.35))">${LOGO}</div><div style="font-weight:800;font-size:22px;letter-spacing:-.5px">ShiftMate</div></div>
+        ${mgHTML()}
+        <div class="fade h1" style="font-size:36px;margin-top:22px;letter-spacing:-1.3px;animation-delay:.2s">Work that fits<br>your timetable.</div>
+        <div class="fade" style="font-size:16.5px;margin:10px 0 18px;opacity:.82;font-weight:500;line-height:1.45;animation-delay:.26s">ShiftMate shows student jobs that never clash with your classes or exams.</div>
+
       </div>
-      <button class="btn light fade" style="animation-delay:.4s" onclick="obStep=1;renderOB()">Get started</button>
-      <div class="foot" style="color:rgba(255,255,255,.65)"><span class="demo">Prototype</span><br>Research prototype with demo data. No real accounts or payments.</div>
+      <button class="btn light fade" style="animation-delay:.34s;position:relative" onclick="obStep=1;renderOB()">Get started</button>
+      <div class="foot" style="color:rgba(255,255,255,.65);position:relative"><span class="demo">Prototype</span><br>Research prototype with demo data. No real accounts or payments.</div>
     </div>`;
   } else if(obStep===1){
     o.innerHTML=`<div class="ob">
@@ -320,8 +422,8 @@ function renderOB(){
   } else {
     o.innerHTML=`<div class="ob">
       <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
-        <div style="width:64px;height:64px">${LOGO}</div>
-        <div class="h1" style="margin-top:20px;font-size:26px">Connecting to<br>${UNIS[obUni]}</div>
+        <div class="h1" style="font-size:26px">Connecting to<br>${UNIS[obUni]}</div>
+        <div class="sync"><span class="sq" style="background:var(--wineL)">${sv(P.grad,28,'#7A1F2B')}</span><div class="track" id="trk"><i></i><i></i><i></i></div><span class="sq">${LOGO}</span></div>
         <ul class="steps" style="margin-top:20px" id="cs">
           <li><span class="ck"></span>Signing in with student account</li>
           <li><span class="ck"></span>Importing lectures and tutorials</li>
@@ -340,7 +442,7 @@ Object.defineProperty(window,'obStep',{get:()=>obStep,set:v=>obStep=v});
 window.runConnect=function(){
   const li=[...document.querySelectorAll('#cs li')];
   li.forEach((l,i)=>setTimeout(()=>{if(i>0){li[i-1].className='done';li[i-1].querySelector('.ck').innerHTML=sv(P.check,15,'#fff',3)}l.className='busy'},i*750));
-  setTimeout(()=>{const l=li[li.length-1];l.className='done';l.querySelector('.ck').innerHTML=sv(P.check,15,'#fff',3);const d=$('csdone');d.style.opacity=1;d.style.transform='none';$('csbtn').disabled=false},li.length*750);
+  setTimeout(()=>{const l=li[li.length-1];l.className='done';l.querySelector('.ck').innerHTML=sv(P.check,15,'#fff',3);const d=$('csdone');$('trk').classList.add('done');d.style.opacity=1;d.style.transform='none';$('csbtn').disabled=false},li.length*750);
 };
 window.finishOB=function(){S.onboarded=true;S.uni=obUni;save();renderOB();render();setTimeout(urgentAlert,900)};
 function urgentAlert(){
@@ -351,8 +453,14 @@ function urgentAlert(){
 
 /* ---------- shell ---------- */
 const TABS=[['shifts','Shifts',P.home],['cal','Timetable',P.cal],['mine','My shifts',P.checkc],['earn','Earnings',P.chart],['me','Profile',P.user]];
+let lastTab=null;
 function render(){
-  $('tabs').innerHTML=TABS.map(([k,l,ic])=>`<button class="${S.tab===k?'on':''}" onclick="go('${k}')"><span class="ti">${sv(ic,22,'currentColor',S.tab===k?2.3:2)}</span>${l}</button>`).join('');
+  const t=$('tabs');
+  if(!t.dataset.ready){t.innerHTML='<span class="ind" id="ind"></span>'+TABS.map(([k,l,ic])=>`<button data-t="${k}" onclick="go('${k}')"><span class="ti">${sv(ic,22,'currentColor',2.1)}</span>${l}</button>`).join('');t.dataset.ready=1}
+  const idx=TABS.findIndex(x=>x[0]===S.tab);
+  $('ind').style.transform=`translateX(${idx*100}%)`;
+  t.querySelectorAll('[data-t]').forEach(b=>{const on=b.dataset.t===S.tab;b.classList.toggle('on',on);const ti=b.querySelector('.ti');ti.classList.remove('bump');if(on&&lastTab!==null&&lastTab!==S.tab){void ti.offsetWidth;ti.classList.add('bump')}});
+  lastTab=S.tab;
   ({shifts:vShifts,cal:vCal,mine:vMine,earn:vEarn,me:vMe})[S.tab]();
 }
 window.go=t=>{S.tab=t;save();render();$('main').scrollTop=0};
@@ -365,7 +473,7 @@ function jobCard(s,i){
       <div style="flex:1"><div class="jt">${s.role}</div><div class="je">${s.emp} · ${rating(s.rt)}</div></div>
       <div class="price"><b>${eur(s.rate)}</b><span>per hour</span></div></div>
     <div class="meta">
-      ${s.urgent&&!acc?`<span class="tag amb">${sv(P.bolt,13,'#D97F00')}+${eur(s.bonus)}/h</span>`:''}
+      ${s.urgent&&!acc?`<span class="tag amb"><span class="pulse" style="display:inline-flex">${sv(P.bolt,13,'#D97F00')}</span>+${eur(s.bonus)}/h</span>`:''}
       <span class="tag">${sv(P.clock,13,'#4D4652',2.2)}${dayLabel(s.d)} · ${fmt(s.s)}–${fmt(s.e)}</span>
       <span class="tag">${sv(P.pin,13,'#4D4652',2.2)}${s.km} km</span>
       ${acc?`<span class="tag ok">${sv(P.check,13,'#0E8F7E',3)}Accepted</span>`:`<span class="tag ok"><span class="dot"></span>Fits</span>`}
@@ -376,15 +484,15 @@ function vShifts(){
     <button class="iconbtn" onclick="go('mine')">${sv(P.bell,21,'#17121A')}<i></i></button><button class="avatar" onclick="go('me')">M</button></div>`;
   const vis=visible(), pot=vis.reduce((a,s)=>a+pay(s),0);
   $('main').innerHTML=`
-    <div class="hero fade"><div class="lbl">You could earn this week</div><div class="num">${eur(pot)}</div>
+    <div class="hero fade"><span class="shine"></span><div class="lbl">You could earn this week</div><div class="num" data-count="${pot}" data-eur="1">${eur(pot)}</div>
       <div class="row" style="flex-wrap:wrap;gap:6px"><span class="gchip">${sv(P.checkc,14,'#fff',2.2)}${vis.length} shifts fit</span><span class="gchip">${HIDDEN} clashes hidden</span>${S.examPause?`<span class="gchip">${sv(P.moon,13,'#fff',2.2)}Exam pause Fri</span>`:''}</div></div>
     <label class="search fade" style="animation-delay:.05s">${sv(P.search,20,'#A29BA7',2.2)}<input id="q" placeholder="Search shifts or employers" value="${query}" autocomplete="off"></label>
-    <div class="pills fade" style="animation-delay:.08s">${[['all','All'],['urgent','Urgent'],['today','Today'],['weekend','Weekend']].map(([k,l])=>`<button class="pill ${S.filter===k?'on':''}" data-f="${k}">${k==='urgent'?sv(P.bolt,14,S.filter===k?'#fff':'#D97F00'):''}${l}</button>`).join('')}</div>
+    <div class="pills fade" style="animation-delay:.08s">${[['all','All'],['urgent','Urgent'],['today','Today'],['weekend','Weekend']].map(([k,l])=>`<button class="pill ${S.filter===k?'on':''}" data-f="${k}">${k==='urgent'?sv(P.bolt,14,'#F2A900'):''}${l}</button>`).join('')}</div>
     <div class="sec"><div class="h2">Fits your timetable</div><span id="cnt"></span></div>
     <div id="list"></div>`;
   $('q').oninput=e=>{query=e.target.value;list()};
-  document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{S.filter=b.dataset.f;save();vShifts()});
-  list();
+  document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{S.filter=b.dataset.f;save();document.querySelectorAll('[data-f]').forEach(x=>x.classList.toggle('on',x===b));list()});
+  list(); countUps($('main'));
 }
 function list(){
   let l=visible();
@@ -408,19 +516,19 @@ window.openShift=function(id){
     <div class="je" style="font-size:15px;margin-top:4px">${s.emp} · ${rating(s.rt)} <span>(${s.n})</span></div>
   </div>
   <div class="scroll" style="padding-top:0;padding-bottom:110px">
-    <div class="stats">
+    <div class="stats fade" style="animation-delay:.12s">
       <div class="stat"><small>When</small><b>${dayLabel(s.d)}</b><span>${fmt(s.s)}–${fmt(s.e)}</span></div>
       <div class="stat"><small>Pay</small><b>${eur(s.rate)}</b><span>per hour</span></div>
       <div class="stat"><small>Total</small><b>${eur(pay(s))}</b><span>${hrs(s)} hours</span></div>
     </div>
-    <div class="card"><div class="row"><span class="ck" style="background:var(--okL)">${sv(P.checkc,18,'#0E8F7E',2.2)}</span><b>Fits your timetable</b></div>
-      <div class="daybar">${cls.map(x=>`<i style="left:${pos(x.s)};width:${w(x.s,x.e)};background:${x.exam?'#C9C1CC':'#E7C3CA'}"></i>`).join('')}<i style="left:${pos(s.s)};width:${w(s.s,s.e)};background:linear-gradient(90deg,#17A592,#0E7F70)"></i></div>
+    <div class="card fade" style="animation-delay:.18s"><div class="row"><span class="ck" style="background:var(--okL)">${sv(P.checkc,18,'#0E8F7E',2.2)}</span><b>Fits your timetable</b></div>
+      <div class="daybar">${cls.map(x=>`<i style="left:${pos(x.s)};width:${w(x.s,x.e)};background:${x.exam?'#C9C1CC':'#E7C3CA'}"></i>`).join('')}<i class="sh" style="left:${pos(s.s)};width:${w(s.s,s.e)};background:linear-gradient(90deg,#17A592,#0E7F70)"></i></div>
       <div class="ticks"><span>08</span><span>12</span><span>16</span><span>20</span><span>24</span></div>
       <div class="row" style="gap:14px;margin:10px 0 8px;font-size:12.5px;font-weight:700;color:var(--mut)"><span class="row" style="gap:6px"><i style="width:12px;height:12px;border-radius:4px;background:#E7C3CA;display:inline-block"></i>Your classes</span><span class="row" style="gap:6px"><i style="width:12px;height:12px;border-radius:4px;background:#0E8F7E;display:inline-block"></i>This shift</span></div>
       <div class="mut" style="font-size:14.5px;line-height:1.45;font-weight:500">${fitText(s)}</div></div>
-    <div class="card"><b>About the shift</b><div style="margin-top:6px;line-height:1.5;font-weight:500;color:#3A3340">${s.desc}</div>
+    <div class="card fade" style="animation-delay:.24s"><b>About the shift</b><div style="margin-top:6px;line-height:1.5;font-weight:500;color:#3A3340">${s.desc}</div>
       <div class="row" style="margin-top:12px;gap:8px">${sv(P.pin,16,'#6F6874',2.2)}<span class="mut" style="font-weight:600;font-size:14px">${s.loc} · ${s.km} km away</span></div></div>
-    <div class="card"><div class="row"><b>Rated by students</b><div class="sp"></div>${rating(s.rt)}</div>
+    <div class="card fade" style="animation-delay:.3s"><div class="row"><b>Rated by students</b><div class="sp"></div>${rating(s.rt)}</div>
       <div class="mut" style="font-size:13px;font-weight:600;margin:2px 0 12px">${s.n} ratings from students who worked here</div>
       ${[['Fair treatment',s.fair],['Paid on time',s.paid]].map(([l,v])=>`<div class="row" style="margin-top:9px"><span style="width:118px;font-weight:700;font-size:13.5px">${l}</span><div class="meter"><i style="width:${v/5*100}%"></i></div><b style="width:28px;text-align:right;font-size:13.5px">${v}</b></div>`).join('')}
     </div>
@@ -431,7 +539,7 @@ window.openShift=function(id){
 window.closePage=()=>$('page').classList.remove('show');
 window.accept=function(id){
   if(!S.accepted.includes(id)) S.accepted.push(id); save(); closePage(); render();
-  const s=byId(id); toast(`<b>Shift accepted</b><br>${s.role}, ${dayLabel(s.d)} ${fmt(s.s)}–${fmt(s.e)} is in your timetable.`,okIc);
+  const s=byId(id); if(RM) toast(`<b>Shift accepted</b><br>${s.role}, ${dayLabel(s.d)} ${fmt(s.s)}–${fmt(s.e)} is in your timetable.`,okIc); else celebrate(s);
 };
 
 /* ---------- swap & rating sheets ---------- */
@@ -453,7 +561,8 @@ window.openSwap=function(id){
 };
 function runSwap(id){
   const sh=$('sheet');
-  sh.innerHTML=`<div class="grab"></div><div class="h2" style="font-size:20px">Looking for a swap…</div>
+  sh.innerHTML=`<div class="grab"></div><div class="h2" style="font-size:20px;text-align:center">Looking for a swap…</div>
+   <div class="swapg"><div class="av" style="background:var(--grad)">M</div><span id="swi" class="spin" style="display:inline-flex">${sv(P.refresh,26,'#A29BA7',2.2)}</span><div class="av" id="swb2" style="background:#E6E1E9;color:#A29BA7">?</div></div>
    <ul class="steps" style="margin:10px 0 14px" id="sw"><li class="busy"><span class="ck"></span>Notifying 3 verified students who are free</li><li><span class="ck"></span>Waiting for a student to accept</li></ul>
    <div id="swd" class="okbox" style="opacity:0;transition:opacity .4s;margin-bottom:14px"><b>${sv(P.checkc,20,'#0B6E61')}Shift swapped</b>Sanne, a verified student, takes over your shift. The employer has been informed.</div>
    <button class="btn" id="swb" disabled>Done</button>`;
@@ -461,6 +570,7 @@ function runSwap(id){
   const li=[...sh.querySelectorAll('#sw li')];
   setTimeout(()=>{li[0].className='done';li[0].querySelector('.ck').innerHTML=sv(P.check,15,'#fff',3);li[1].className='busy'},1100);
   setTimeout(()=>{li[1].className='done';li[1].querySelector('.ck').innerHTML=sv(P.check,15,'#fff',3);$('swd').style.opacity=1;$('swb').disabled=false;
+    const a=$('swb2');a.textContent='S';a.style.background='linear-gradient(135deg,#17A592,#0E7F70)';a.style.color='#fff';a.classList.add('popin');const ic=$('swi');ic.classList.remove('spin');ic.innerHTML=sv(P.swap,26,'#0E8F7E',2.4);ic.classList.add('popin');
     S.accepted=S.accepted.filter(x=>x!==id); if(!S.swapped.includes(id)) S.swapped.push(id); save();},2400);
 }
 window.openRate=function(id){
@@ -493,9 +603,9 @@ function vCal(){
   h+=`<div class="tl fade" style="height:${(H1-H0)*PX}px;animation-delay:.08s">`;
   for(let x=H0;x<H1;x+=2) h+=`<div class="hr" style="top:${(x-H0)*PX}px">${fmt(x)}</div><div class="hl" style="top:${(x-H0)*PX}px"></div>`;
   if(!exam) for(const [a,b] of free){const n=avail.filter(s=>s.s>=a&&s.e<=b).length;
-    h+=`<button class="blk free" style="top:${(a-H0)*PX+3}px;height:${(b-a)*PX-6}px" onclick="S_go()"><span class="row" style="gap:6px">${sv(P.plus,15,'#0E8F7E',2.6)}Free ${fmt(a)}–${b===24?'24:00':fmt(b)}</span><small>${n?`${n} shift${n>1?'s':''} fit here`:'No shifts yet'}</small></button>`;}
-  for(const c of cls) h+=`<div class="blk ${c.exam?'exam':'cls'}" style="top:${(c.s-H0)*PX+3}px;height:${(c.e-c.s)*PX-6}px;${c.exam?'':'padding-left:16px'}">${c.t}<small>${fmt(c.s)}–${fmt(c.e)} · ${c.r}</small></div>`;
-  for(const s of mine) h+=`<button class="blk mine" style="top:${(s.s-H0)*PX+3}px;height:${(s.e-s.s)*PX-6}px" onclick="openShift('${s.id}')">${s.role} · ${s.emp}<small>${fmt(s.s)}–${fmt(s.e)} · ${eur(pay(s))}</small></button>`;
+    h+=`<button class="blk free pop" style="animation-delay:.25s;top:${(a-H0)*PX+3}px;height:${(b-a)*PX-6}px" onclick="S_go()"><span class="row" style="gap:6px">${sv(P.plus,15,'#0E8F7E',2.6)}Free ${fmt(a)}–${b===24?'24:00':fmt(b)}</span><small>${n?`${n} shift${n>1?'s':''} fit here`:'No shifts yet'}</small></button>`;}
+  cls.forEach((c,i)=>h+=`<div class="blk pop ${c.exam?'exam':'cls'}" style="animation-delay:${.1+i*.07}s;top:${(c.s-H0)*PX+3}px;height:${(c.e-c.s)*PX-6}px;${c.exam?'':'padding-left:16px'}">${c.t}<small>${fmt(c.s)}–${fmt(c.e)} · ${c.r}</small></div>`);
+  for(const s of mine) h+=`<button class="blk mine pop" style="animation-delay:.3s;top:${(s.s-H0)*PX+3}px;height:${(s.e-s.s)*PX-6}px" onclick="openShift('${s.id}')">${s.role} · ${s.emp}<small>${fmt(s.s)}–${fmt(s.e)} · ${eur(pay(s))}</small></button>`;
   if(d===TODAY) h+=`<div class="now" style="top:${(NOW-H0)*PX}px"></div>`;
   h+='</div>';
   $('main').innerHTML=h;
@@ -530,15 +640,16 @@ function vEarn(){
   const weeks=[...WEEKS,{w:'This wk',h:pH,cur:true}], mx=Math.max(S.limit,...weeks.map(w=>w.h));
   const pct=Math.min(1,pH/S.limit), over=pH>S.limit, R=40, C=2*Math.PI*R;
   $('main').innerHTML=`
-   <div class="hero fade"><div class="lbl">Earned in November</div><div class="num">${eur(earned)}</div>
+   <div class="hero fade"><span class="shine"></span><div class="lbl">Earned in November</div><div class="num" data-count="${earned}" data-eur="1">${eur(earned)}</div>
      <div class="row" style="gap:6px;flex-wrap:wrap"><span class="gchip">${eh} hours</span><span class="gchip">${PAST.length} shifts</span><span class="gchip">${sv(P.check,13,'#fff',3)}All paid on time</span></div></div>
    <div class="card fade" style="margin-top:12px;animation-delay:.05s"><div class="row" style="gap:16px">
-     <svg width="100" height="100" viewBox="0 0 100 100" style="flex:none"><circle cx="50" cy="50" r="${R}" fill="none" stroke="#F0EDF2" stroke-width="11"/><circle cx="50" cy="50" r="${R}" fill="none" stroke="${over?'#D93A3A':'#0E8F7E'}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}" transform="rotate(-90 50 50)" style="transition:stroke-dashoffset .6s"/><text x="50" y="48" text-anchor="middle" font-family="Plus Jakarta Sans" font-weight="800" font-size="19" fill="#17121A">${pH}h</text><text x="50" y="64" text-anchor="middle" font-family="Plus Jakarta Sans" font-weight="700" font-size="10.5" fill="#A29BA7">of ${S.limit}h</text></svg>
+     <svg width="100" height="100" viewBox="0 0 100 100" style="flex:none"><circle cx="50" cy="50" r="${R}" fill="none" stroke="#F0EDF2" stroke-width="11"/><circle cx="50" cy="50" r="${R}" fill="none" stroke="${over?'#D93A3A':'#0E8F7E'}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}" transform="rotate(-90 50 50)" class="ring" style="--c:${C}"/><text x="50" y="48" text-anchor="middle" font-family="Plus Jakarta Sans" font-weight="800" font-size="19" fill="#17121A">${pH}h</text><text x="50" y="64" text-anchor="middle" font-family="Plus Jakarta Sans" font-weight="700" font-size="10.5" fill="#A29BA7">of ${S.limit}h</text></svg>
      <div style="flex:1"><b>Weekly hour limit</b><div class="mut" style="font-size:13.5px;font-weight:500;line-height:1.4;margin:3px 0 10px">${over?`You planned ${pH} h, more than your limit.`:'ShiftMate warns you before you go over it.'}</div>
        <div class="stepper"><button onclick="setLimit(-2)">−</button>${S.limit} h<button onclick="setLimit(2)">+</button></div></div></div></div>
    <div class="card fade" style="animation-delay:.1s"><div class="row"><div><b>Planned this week</b><div class="mut" style="font-size:13.5px;font-weight:600">${up.length} shift${up.length===1?'':'s'} accepted</div></div><div class="sp"></div><div style="text-align:right"><div style="font-size:22px;font-weight:800;color:var(--ok);letter-spacing:-.5px">${eur(pE)}</div><div class="mut" style="font-size:13px;font-weight:600">${pH} hours</div></div></div></div>
    <div class="card fade" style="animation-delay:.15s"><b>Hours per week</b>
-     <div class="bars">${weeks.map(w=>`<div class="${w.cur?'cur':''}"><b>${w.h}h</b><i style="height:${Math.max(6,w.h/mx*100)}px"></i>${w.w}</div>`).join('')}</div></div>`;
+     <div class="bars">${weeks.map((w,i)=>`<div class="${w.cur?'cur':''}"><b>${w.h}h</b><i style="height:${Math.max(6,w.h/mx*100)}px;animation-delay:${.25+i*.1}s"></i>${w.w}</div>`).join('')}</div></div>`;
+  countUps($('main'));
 }
 window.setLimit=v=>{S.limit=Math.min(40,Math.max(4,S.limit+v));save();vEarn()};
 
