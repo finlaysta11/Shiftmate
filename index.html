@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ShiftMate</title>
+<meta name="theme-color" content="#7A1F2B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ShiftMate">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--wine:#7A1F2B;--wine2:#9B2C3A;--wineL:#F6E7EA;--teal:#1F6F6A;--tealL:#DDF0EC;--ink:#2B1D20;--mut:#7A6A6E;--line:#EFE6E8;--bg:#FBF7F5;--card:#fff;--red:#C62828;--amber:#B8650A;--amberL:#FDF0DE}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Source Sans 3',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#E9E3E5;color:var(--ink);font-size:16px}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+#app{position:relative;max-width:480px;height:100%;margin:0 auto;background:var(--bg);overflow:hidden;display:flex;flex-direction:column}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 18px 24px}
+header.top{padding:calc(env(safe-area-inset-top) + 14px) 18px 10px;background:var(--bg)}
+.hello{font-size:15px;color:var(--mut);font-weight:600}
+.h1{font-size:27px;font-weight:800;letter-spacing:-.4px;line-height:1.15}
+.h2{font-size:19px;font-weight:800;margin:20px 0 10px}
+.sub{color:var(--mut);font-size:15px;line-height:1.35}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:5px 11px;border-radius:20px;background:var(--tealL);color:var(--teal)}
+.chip.w{background:var(--wineL);color:var(--wine)}
+.chip.a{background:var(--amberL);color:var(--amber)}
+.chip.g{background:#EFEAEC;color:var(--mut)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.fchip{flex:none;padding:8px 15px;border-radius:20px;background:#fff;border:1.5px solid var(--line);font-weight:700;font-size:14px;color:var(--mut)}
+.fchip.on{background:var(--wine);border-color:var(--wine);color:#fff}
+.card{background:var(--card);border-radius:20px;padding:15px 16px;box-shadow:0 2px 10px rgba(60,20,30,.06);margin-bottom:12px}
+.shift{display:flex;gap:13px;align-items:flex-start;width:100%;text-align:left}
+.ico{width:50px;height:50px;border-radius:15px;background:var(--wineL);display:flex;align-items:center;justify-content:center;font-size:25px;flex:none}
+.sh-t{font-weight:800;font-size:17px;line-height:1.2}
+.sh-e{color:var(--mut);font-size:14px;font-weight:600;margin-top:1px}
+.sh-m{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:8px;font-size:14px;font-weight:600}
+.sh-pay{margin-left:auto;text-align:right;flex:none}
+.sh-pay b{display:block;font-size:19px;color:var(--wine);font-weight:800}
+.sh-pay span{font-size:12px;color:var(--mut);font-weight:600}
+.urgent{border:2px solid #F2B866;background:linear-gradient(180deg,#FFF8EE,#fff 60%)}
+.banner{display:flex;gap:10px;align-items:center;background:var(--tealL);color:#155650;border-radius:16px;padding:11px 14px;font-size:14px;font-weight:600;margin:6px 0 12px}
+.banner svg{flex:none}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:54px;border-radius:16px;background:var(--wine);color:#fff;font-weight:800;font-size:17px}
+.btn.sec{background:#fff;color:var(--wine);border:2px solid var(--wine)}
+.btn.teal{background:var(--teal)}
+.btn.ghost{background:transparent;color:var(--mut);height:44px;font-size:15px}
+.btn:disabled{opacity:.5}
+.row{display:flex;align-items:center;gap:10px}
+.sp{flex:1}
+/* tabs */
+nav.tabs{display:flex;background:#fff;border-top:1px solid var(--line);padding:6px 4px calc(env(safe-area-inset-bottom) + 6px)}
+nav.tabs button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11.5px;font-weight:700;color:#A3959A;padding:4px 0}
+nav.tabs button.on{color:var(--wine)}
+nav.tabs svg{width:25px;height:25px}
+/* page overlay */
+.page{position:absolute;inset:0;background:var(--bg);z-index:20;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s ease}
+.page.show{transform:none}
+.pbar{display:flex;align-items:center;gap:6px;padding:calc(env(safe-area-inset-top) + 10px) 10px 6px}
+.back{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.fact{background:#fff;border-radius:16px;padding:12px 14px;box-shadow:0 2px 8px rgba(60,20,30,.05)}
+.fact small{display:block;font-size:12.5px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.fact b{font-size:17px;font-weight:800}
+.fitbox{background:var(--tealL);border-radius:18px;padding:14px 16px;color:#155650;font-size:15px;line-height:1.4;margin-bottom:12px}
+.fitbox b{display:flex;align-items:center;gap:8px;font-size:16px;margin-bottom:4px}
+.bar{height:9px;border-radius:6px;background:#EFE6E8;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:6px;background:var(--teal)}
+.stars{color:#E0A100;letter-spacing:1px}
+.bottom{padding:12px 18px calc(env(safe-area-inset-bottom) + 14px);background:var(--bg);border-top:1px solid var(--line)}
+/* sheet */
+.dim{position:absolute;inset:0;background:rgba(30,12,18,.45);z-index:40;opacity:0;pointer-events:none;transition:opacity .25s}
+.dim.show{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:26px 26px 0 0;padding:10px 20px calc(env(safe-area-inset-bottom) + 20px);z-index:41;transform:translateY(105%);transition:transform .3s ease;max-height:88%;overflow-y:auto}
+.sheet.show{transform:none}
+.grab{width:42px;height:5px;border-radius:3px;background:#E2D8DB;margin:0 auto 14px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border-radius:14px;border:2px solid var(--line);margin-bottom:9px;font-weight:700;text-align:left}
+.opt.on{border-color:var(--wine);background:var(--wineL)}
+.toast{position:absolute;left:14px;right:14px;top:calc(env(safe-area-inset-top) + 12px);transform:translateY(-160%);background:var(--ink);color:#fff;font-weight:700;padding:12px 18px;border-radius:16px;z-index:60;transition:transform .3s;font-size:15px;text-align:center;line-height:1.3;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.toast.show{transform:none}
+/* timetable */
+.days{display:flex;gap:6px;margin:4px 0 14px}
+.day{flex:1;border-radius:14px;background:#fff;padding:7px 0 8px;text-align:center;font-weight:700;color:var(--mut);font-size:13px;border:2px solid transparent}
+.day b{display:block;font-size:18px;color:var(--ink)}
+.day.on{border-color:var(--wine);background:var(--wineL)}
+.day .dots{display:flex;justify-content:center;gap:3px;margin-top:4px;height:6px}
+.day .dots i{width:6px;height:6px;border-radius:50%}
+.tl{position:relative;margin-left:52px;border-left:2px solid var(--line)}
+.tl .hr{position:absolute;left:-54px;width:46px;text-align:right;font-size:12.5px;color:#A3959A;font-weight:700;transform:translateY(-8px)}
+.tl .hl{position:absolute;left:0;right:0;border-top:1px dashed #EDE4E6}
+.blk{position:absolute;left:8px;right:4px;border-radius:13px;padding:7px 11px;font-size:14px;font-weight:700;line-height:1.2;overflow:hidden}
+.blk small{display:block;font-weight:600;opacity:.8;font-size:12.5px;margin-top:2px}
+.blk.cls{background:#F1DDE1;color:var(--wine);border-left:5px solid var(--wine)}
+.blk.exam{background:repeating-linear-gradient(45deg,#EFE9EB 0 9px,#F8F4F5 9px 18px);color:var(--ink);border:2px solid #D9CFD2}
+.blk.mine{background:var(--teal);color:#fff}
+.blk.free{background:transparent;border:2px dashed #A8D5CE;color:var(--teal);display:flex;flex-direction:column;justify-content:center}
+/* earnings */
+.big{font-size:34px;font-weight:800;letter-spacing:-.5px;color:var(--ink)}
+.cols{display:flex;align-items:flex-end;gap:14px;height:130px;padding-top:8px}
+.cols div{flex:1;text-align:center;font-size:12.5px;color:var(--mut);font-weight:700}
+.cols i{display:block;border-radius:10px 10px 4px 4px;background:#E7C9CF;margin-bottom:6px}
+.cols .cur i{background:var(--wine)}
+.toggle{width:52px;height:31px;border-radius:20px;background:#DCD3D6;position:relative;transition:background .2s;flex:none}
+.toggle:after{content:'';position:absolute;left:3px;top:3px;width:25px;height:25px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:left .2s}
+.toggle.on{background:var(--teal)}
+.toggle.on:after{left:24px}
+.set{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.set:last-child{border-bottom:0}
+.set b{display:block;font-size:16px}
+.set span{font-size:13.5px;color:var(--mut);line-height:1.3;display:block}
+.stepper{display:flex;align-items:center;gap:10px;font-weight:800}
+.stepper button{width:34px;height:34px;border-radius:50%;background:var(--wineL);color:var(--wine);font-size:20px;font-weight:800}
+/* onboarding */
+.ob{position:absolute;inset:0;z-index:30;background:var(--bg);display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top) + 24px) 24px calc(env(safe-area-inset-bottom) + 22px)}
+.ob .logo{width:96px;height:96px;filter:drop-shadow(0 12px 22px rgba(122,31,43,.3))}
+.demo{display:inline-block;font-size:12px;font-weight:800;letter-spacing:1px;color:var(--amber);background:var(--amberL);padding:4px 10px;border-radius:10px;text-transform:uppercase}
+.steps li{list-style:none;display:flex;gap:12px;align-items:center;padding:9px 0;font-weight:600;color:var(--mut)}
+.steps li.done{color:var(--ink)}
+.steps .ck{width:26px;height:26px;border-radius:50%;border:2px solid #DCD3D6;display:flex;align-items:center;justify-content:center;flex:none}
+.steps li.done .ck{background:var(--teal);border-color:var(--teal)}
+.steps li.busy .ck{border-color:var(--teal);border-top-color:transparent;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:40px 20px;color:var(--mut)}
+.empty b{display:block;color:var(--ink);font-size:18px;margin:10px 0 4px}
+.foot{font-size:12.5px;color:#A3959A;text-align:center;margin-top:18px;line-height:1.4}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top" id="hdr"></header>
+  <main class="scroll" id="main"></main>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="page" id="page"></div>
+  <div class="dim" id="dim"></div>
+  <div class="sheet" id="sheet"></div>
+  <div class="toast" id="toast"></div>
+  <div id="ob"></div>
+</div>
+<script>
+/* ---------- icons ---------- */
+const I={
+ shifts:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg>',
+ cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+ mine:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>',
+ earn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+ me:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
+ back:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2B1D20" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>',
+ check:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>',
+ checkT:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F6F6A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>',
+ bolt:'<svg width="15" height="15" viewBox="0 0 24 24" fill="#B8650A"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>',
+ pin:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A6A6E" stroke-width="2.2"><path d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>',
+ clock:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A6A6E" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+ swap:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></svg>'
+};
+const LOGO='<svg viewBox="0 0 120 120"><rect width="120" height="120" rx="28" fill="#7A1F2B"/><rect x="28" y="34" width="64" height="56" rx="10" fill="none" stroke="#fff" stroke-width="7"/><line x1="28" y1="51" x2="92" y2="51" stroke="#fff" stroke-width="7"/><line x1="46" y1="25" x2="46" y2="40" stroke="#fff" stroke-width="7" stroke-linecap="round"/><line x1="74" y1="25" x2="74" y2="40" stroke="#fff" stroke-width="7" stroke-linecap="round"/><path d="M45 70 L56 80 L76 60" stroke="#7FD6C8" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+/* ---------- demo data ---------- */
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const DAYF=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DATES=[30,1,2,3,4,5,6]; // demo week
+const TODAY=2;
+const UNIS=['Hanze University of Applied Sciences','University of Groningen','University of Oldenburg','Another university'];
+const CLASSES=[
+ {d:0,s:9,e:12,t:'Marketing',r:'Lecture · Room H.1.12'},
+ {d:0,s:13,e:15,t:'Marketing tutorial',r:'Tutorial · Room H.2.04'},
+ {d:1,s:10,e:13,t:'International Finance',r:'Lecture · Room A.0.10'},
+ {d:2,s:9,e:11,t:'Research Methods',r:'Lecture · Room H.1.08'},
+ {d:2,s:14,e:17,t:'Group project',r:'Project work · Library'},
+ {d:3,s:11,e:13,t:'Strategy',r:'Lecture · Room B.1.20'},
+ {d:4,s:10,e:12,t:'Exam: Supply Chain Mgmt.',r:'Exam hall',exam:true}
+];
+const SHIFTS=[
+ {id:'s3',role:'Barista',emp:'Café Hoekje',ic:'☕',d:2,s:17.5,e:21.5,rate:17,bonus:2.5,urgent:true,loc:'City centre · 0.8 km',rt:4.8,n:54,fair:4.8,paid:4.9,desc:'Evening shift behind the bar. A colleague called in sick, so this shift pays an urgent bonus.'},
+ {id:'s1',role:'Event staff',emp:'Noorderlicht Events',ic:'🎤',d:0,s:17,e:22,rate:14.5,loc:'Concert hall · 1.2 km',rt:4.6,n:38,fair:4.7,paid:4.5,desc:'Help with guest check-in and the cloakroom during a concert. Black clothing, no experience needed.'},
+ {id:'s2',role:'Catering assistant',emp:'Stadskeuken Catering',ic:'🍽️',d:1,s:14,e:18,rate:13.8,loc:'Zernike Campus · 3.4 km',rt:4.3,n:21,fair:4.4,paid:4.2,desc:'Set up and serve lunch and drinks at a conference on campus.'},
+ {id:'s4',role:'Bike courier',emp:'Fietsenhub',ic:'🚲',d:3,s:17,e:21,rate:14,loc:'City centre · 1.5 km',rt:4.4,n:17,fair:4.5,paid:4.4,desc:'Deliver orders by e-bike in the city centre. Bike and rain gear provided.'},
+ {id:'s5',role:'Event staff',emp:'Noorderlicht Events',ic:'🎤',d:4,s:18,e:23,rate:14.5,loc:'Concert hall · 1.2 km',rt:4.6,n:38,fair:4.7,paid:4.5,desc:'Bar support during a sold-out show.'},
+ {id:'s6',role:'Shop assistant',emp:'Boekwinkel Zuid',ic:'📚',d:5,s:10,e:16,rate:13.2,loc:'Helpman · 2.1 km',rt:4.1,n:12,fair:4.3,paid:4.0,desc:'Help customers, restock shelves and work the till on a busy Saturday.'},
+ {id:'s7',role:'Stock assistant',emp:'Fietsenhub',ic:'📦',d:6,s:12,e:17,rate:13.5,loc:'Industrial area · 4.0 km',rt:4.4,n:17,fair:4.5,paid:4.4,desc:'Unpack deliveries and prepare the shop for the week.'}
+];
+const PAST=[
+ {id:'p1',role:'Event staff',emp:'Noorderlicht Events',ic:'🎤',when:'Sat 22 Nov',h:5,pay:72.5},
+ {id:'p2',role:'Barista',emp:'Café Hoekje',ic:'☕',when:'Thu 20 Nov',h:4,pay:62.0},
+ {id:'p3',role:'Catering assistant',emp:'Stadskeuken Catering',ic:'🍽️',when:'Wed 12 Nov',h:4.5,pay:62.1}
+];
+const WEEKS=[{w:'W45',h:6},{w:'W46',h:4.5},{w:'W47',h:9}];
+const HIDDEN=14;
+
+/* ---------- state ---------- */
+const DEF={onboarded:false,uni:null,examPause:true,alerts:true,accepted:[],swapped:[],rated:{},limit:16,plus:false,tab:'shifts',filter:'all',day:TODAY,urgentSeen:false};
+let S;
+try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem('shiftmate')||'{}'))}catch(e){S=Object.assign({},DEF)}
+function save(){try{localStorage.setItem('shiftmate',JSON.stringify(S))}catch(e){}}
+
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+const fmt=h=>{const H=Math.floor(h),M=Math.round((h-H)*60);return String(H).padStart(2,'0')+':'+String(M).padStart(2,'0')};
+const eur=v=>'€'+v.toFixed(2);
+const hrs=s=>s.e-s.s;
+const pay=s=>(s.rate)*hrs(s);
+const dayLabel=d=>d===TODAY?'Today':d===TODAY+1?'Tomorrow':DAYS[d]+' '+DATES[d]+(d===0?' Nov':' Dec');
+const visible=()=>SHIFTS.filter(s=>!S.swapped.includes(s.id)&&!(S.examPause&&isExamDay(s.d)));
+const isExamDay=d=>CLASSES.some(c=>c.d===d&&c.exam);
+const byId=id=>SHIFTS.find(s=>s.id===id);
+function fitText(s){
+  const cs=CLASSES.filter(c=>c.d===s.d).sort((a,b)=>a.s-b.s);
+  const before=cs.filter(c=>c.e<=s.s).pop(), after=cs.find(c=>c.s>=s.e);
+  if(!cs.length) return `No classes on ${DAYF[s.d]}, so the whole day is free.`;
+  let t='';
+  if(before) t+=`Your last class (${before.t}) ends at ${fmt(before.e)}.`;
+  if(after) t+=` Your next class starts at ${fmt(after.s)}.`;
+  return t.trim()+' No clash with your timetable.';
+}
+let toastT;
+function toast(msg){const t=$('toast');t.innerHTML=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2600)}
+function stars(r){const f=Math.round(r);return '<span class="stars">'+'★'.repeat(f)+'<span style="color:#E2D8DB">'+'★'.repeat(5-f)+'</span></span>'}
+
+/* ---------- onboarding ---------- */
+let obStep=0, obUni=null;
+function renderOB(){
+  const o=$('ob');
+  if(S.onboarded){o.innerHTML='';return}
+  if(obStep===0){
+    o.innerHTML=`<div class="ob">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+        <div class="logo">${LOGO}</div>
+        <div class="h1" style="font-size:36px;margin-top:26px">ShiftMate</div>
+        <div class="sub" style="font-size:19px;margin-top:6px;color:var(--ink)">Student jobs that fit around your classes.</div>
+        <ul class="steps" style="margin-top:26px">
+          <li class="done"><span class="ck">${I.check}</span>Connect your university timetable once</li>
+          <li class="done"><span class="ck">${I.check}</span>See only shifts in your free time</li>
+          <li class="done"><span class="ck">${I.check}</span>Accept or swap a shift in one tap</li>
+        </ul>
+      </div>
+      <button class="btn" onclick="obStep=1;renderOB()">Get started</button>
+      <div class="foot"><span class="demo">Prototype</span><br>Research prototype with demo data. No real accounts or payments.</div>
+    </div>`;
+  } else if(obStep===1){
+    o.innerHTML=`<div class="ob">
+      <button class="back" style="margin-left:-10px" onclick="obStep=0;renderOB()">${I.back}</button>
+      <div class="h1" style="margin-top:8px">Connect your university timetable</div>
+      <div class="sub" style="margin:8px 0 18px">ShiftMate imports your lectures, tutorials and exams automatically and keeps them up to date.</div>
+      <div style="flex:1;overflow-y:auto">
+        ${UNIS.map((u,i)=>`<button class="opt ${obUni===i?'on':''}" onclick="obUni=${i};renderOB()"><span style="font-size:22px">🎓</span><span style="flex:1">${u}</span>${obUni===i?'<span class="ck" style="width:24px;height:24px;border-radius:50%;background:var(--wine);display:flex;align-items:center;justify-content:center">'+I.check+'</span>':''}</button>`).join('')}
+      </div>
+      <button class="btn" ${obUni===null?'disabled':''} onclick="obStep=2;renderOB();runConnect()">Connect with student account</button>
+      <div class="foot">Demo: no login data is asked for or stored.</div>
+    </div>`;
+  } else {
+    o.innerHTML=`<div class="ob">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+        <div class="h1">Connecting to ${UNIS[obUni]}</div>
+        <ul class="steps" style="margin-top:22px" id="cs">
+          <li><span class="ck"></span>Signing in with student account</li>
+          <li><span class="ck"></span>Importing lectures and tutorials</li>
+          <li><span class="ck"></span>Importing exam dates</li>
+          <li><span class="ck"></span>Finding shifts in your free time</li>
+        </ul>
+        <div id="csdone" style="opacity:0;transition:opacity .4s;margin-top:18px" class="fitbox"><b>${I.checkT}Timetable connected</b>6 classes and 1 exam imported for this week. ShiftMate found ${SHIFTS.length-1} shifts that fit around them.</div>
+      </div>
+      <button class="btn" id="csbtn" disabled onclick="finishOB()">Show my shifts</button>
+    </div>`;
+  }
+}
+function runConnect(){
+  const li=[...document.querySelectorAll('#cs li')];
+  li.forEach((l,i)=>{setTimeout(()=>{if(i>0){li[i-1].className='done';li[i-1].querySelector('.ck').innerHTML=I.check}l.className='busy'},i*750);});
+  setTimeout(()=>{const l=li[li.length-1];l.className='done';l.querySelector('.ck').innerHTML=I.check;$('csdone').style.opacity=1;$('csbtn').disabled=false},li.length*750);
+}
+function finishOB(){S.onboarded=true;S.uni=obUni;save();renderOB();render();setTimeout(urgentAlert,900)}
+function urgentAlert(){
+  if(S.urgentSeen||!S.alerts) return;
+  const s=byId('s3'); if(S.accepted.includes('s3')) return;
+  S.urgentSeen=true;save();
+  toast(`⚡ Urgent shift nearby: ${s.role} at ${s.emp}, today ${fmt(s.s)}–${fmt(s.e)}, ${eur(s.rate)}/h`);
+}
+
+/* ---------- main views ---------- */
+const TABS=[['shifts','Shifts',I.shifts],['cal','Timetable',I.cal],['mine','My shifts',I.mine],['earn','Earnings',I.earn],['me','Profile',I.me]];
+function render(){
+  $('tabs').innerHTML=TABS.map(([k,l,ic])=>`<button class="${S.tab===k?'on':''}" onclick="go('${k}')">${ic}${l}</button>`).join('');
+  ({shifts:vShifts,cal:vCal,mine:vMine,earn:vEarn,me:vMe})[S.tab]();
+}
+function go(t){S.tab=t;save();render();$('main').scrollTop=0}
+
+function shiftCard(s){
+  const acc=S.accepted.includes(s.id);
+  return `<button class="card shift ${s.urgent&&!acc?'urgent':''}" onclick="openShift('${s.id}')">
+    <div class="ico">${s.ic}</div>
+    <div style="flex:1;min-width:0">
+      ${s.urgent&&!acc?`<span class="chip a" style="margin-bottom:6px">${I.bolt}Urgent · +${eur(s.bonus)}/h bonus</span>`:''}
+      <div class="sh-t">${s.role}</div>
+      <div class="sh-e">${s.emp} · ${stars(s.rt)} <span style="font-weight:600">${s.rt}</span></div>
+      <div class="sh-m"><span class="row" style="gap:4px">${I.clock}${dayLabel(s.d)} · ${fmt(s.s)}–${fmt(s.e)}</span><span class="row" style="gap:4px">${I.pin}${s.loc}</span></div>
+      <div style="margin-top:9px">${acc?`<span class="chip">${I.checkT}Accepted</span>`:`<span class="chip">${I.checkT}Fits your timetable</span>`}</div>
+    </div>
+    <div class="sh-pay"><b>${eur(s.rate)}</b><span>per hour</span></div>
+  </button>`;
+}
+function vShifts(){
+  const name='Max';
+  $('hdr').innerHTML=`<div class="row"><div><div class="hello">Hi ${name} 👋</div><div class="h1">Shifts that fit your week</div></div><div class="sp"></div><div style="width:44px;height:44px">${LOGO}</div></div>`;
+  let list=visible();
+  if(S.filter==='urgent') list=list.filter(s=>s.urgent);
+  if(S.filter==='today') list=list.filter(s=>s.d===TODAY);
+  if(S.filter==='weekend') list=list.filter(s=>s.d>=5);
+  list.sort((a,b)=>(b.urgent?1:0)-(a.urgent?1:0)||a.d-b.d||a.s-b.s);
+  const paused=S.examPause?SHIFTS.filter(s=>isExamDay(s.d)).length:0;
+  $('main').innerHTML=`
+    <div class="banner">${I.checkT}<span>Synced with your university timetable. ${HIDDEN} shifts that clash with your classes are hidden${paused?`, and ${DAYF[4]} is paused for your exam`:''}.</span></div>
+    <div class="chips">${[['all','All'],['urgent','⚡ Urgent'],['today','Today'],['weekend','Weekend']].map(([k,l])=>`<button class="fchip ${S.filter===k?'on':''}" onclick="S.filter='${k}';save();vShifts()">${l}</button>`).join('')}</div>
+    <div style="margin-top:8px">${list.length?list.map(shiftCard).join(''):`<div class="empty">📭<b>No shifts here</b>Try another filter.</div>`}</div>`;
+}
+
+function openShift(id){
+  const s=byId(id), acc=S.accepted.includes(id), total=pay(s);
+  const p=$('page');
+  p.innerHTML=`<div class="pbar"><button class="back" onclick="closePage()">${I.back}</button><div style="font-weight:800;font-size:17px">Shift details</div></div>
+  <div class="scroll" style="padding-top:6px">
+    <div class="row" style="gap:14px"><div class="ico" style="width:62px;height:62px;font-size:31px">${s.ic}</div>
+    <div><div class="h1" style="font-size:24px">${s.role}</div><div class="sh-e" style="font-size:15px">${s.emp}</div></div></div>
+    ${s.urgent?`<div style="margin-top:12px"><span class="chip a">${I.bolt}Urgent shift · includes +${eur(s.bonus)}/h bonus</span></div>`:''}
+    <div class="facts">
+      <div class="fact"><small>When</small><b>${dayLabel(s.d)}</b><div class="sub">${fmt(s.s)}–${fmt(s.e)} · ${hrs(s)} h</div></div>
+      <div class="fact"><small>Pay</small><b>${eur(s.rate)}/h</b><div class="sub">≈ ${eur(total)} total</div></div>
+      <div class="fact" style="grid-column:1/3"><small>Where</small><b style="font-size:16px">${s.loc}</b></div>
+    </div>
+    <div class="fitbox"><b>${I.checkT}Fits your timetable</b>${fitText(s)}</div>
+    <div class="card"><div style="font-weight:800;margin-bottom:6px">About the shift</div><div class="sub" style="color:var(--ink)">${s.desc}</div></div>
+    <div class="card"><div class="row"><div style="font-weight:800">Rated by students</div><div class="sp"></div>${stars(s.rt)} <b>${s.rt}</b></div>
+      <div class="sub" style="margin:2px 0 10px">${s.n} ratings from students who worked here</div>
+      ${[['Fair treatment',s.fair],['Paid on time',s.paid]].map(([l,v])=>`<div class="row" style="margin-top:8px"><span style="width:120px;font-weight:600;font-size:14px">${l}</span><div class="bar" style="flex:1"><i style="width:${v/5*100}%"></i></div><b style="width:30px;text-align:right">${v}</b></div>`).join('')}
+    </div>
+  </div>
+  <div class="bottom">${acc?`<button class="btn sec" onclick="openSwap('${id}')">${I.swap}Can't make it? Swap shift</button>`:`<button class="btn" onclick="accept('${id}')">Accept shift · ${eur(total)}</button>`}</div>`;
+  requestAnimationFrame(()=>p.classList.add('show'));
+}
+function closePage(){$('page').classList.remove('show')}
+function accept(id){
+  if(!S.accepted.includes(id)) S.accepted.push(id); save();
+  closePage(); render();
+  const s=byId(id); toast(`✅ Shift accepted! ${s.role}, ${dayLabel(s.d)} ${fmt(s.s)}–${fmt(s.e)} is in your timetable.`);
+}
+
+/* swap */
+let swapReason=null;
+function openSwap(id){
+  swapReason=null;
+  const s=byId(id);
+  const sh=$('sheet');
+  const draw=()=>{sh.innerHTML=`<div class="grab"></div>
+    <div class="h1" style="font-size:23px">Swap this shift</div>
+    <div class="sub" style="margin:4px 0 14px">${s.role} at ${s.emp}, ${dayLabel(s.d)} ${fmt(s.s)}–${fmt(s.e)}. Verified students with free time get a notification.</div>
+    ${['Exam preparation','Sick','Group project meeting','Something else'].map((r,i)=>`<button class="opt ${swapReason===i?'on':''}" data-r="${i}">${r}</button>`).join('')}
+    <button class="btn" style="margin-top:8px" ${swapReason===null?'disabled':''} id="swapgo">Offer to other students</button>
+    <button class="btn ghost" onclick="closeSheet()">Cancel</button>`;
+    sh.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{swapReason=+b.dataset.r;draw()});
+    const g=$('swapgo'); if(g) g.onclick=()=>runSwap(id);
+  };
+  draw(); openSheet();
+}
+function runSwap(id){
+  const sh=$('sheet');
+  sh.innerHTML=`<div class="grab"></div><div class="h1" style="font-size:23px">Looking for a swap…</div>
+   <ul class="steps" style="margin:14px 0" id="sw"><li class="busy"><span class="ck"></span>Notifying 3 verified students who are free</li><li><span class="ck"></span>Waiting for a student to accept</li></ul>
+   <div id="swd" class="fitbox" style="opacity:0;transition:opacity .4s"><b>${I.checkT}Shift swapped</b>Sanne (verified student) takes over your shift. The employer has been informed.</div>
+   <button class="btn" id="swb" disabled onclick="closeSheet();closePage();render()">Done</button>`;
+  const li=[...sh.querySelectorAll('#sw li')];
+  setTimeout(()=>{li[0].className='done';li[0].querySelector('.ck').innerHTML=I.check;li[1].className='busy'},1100);
+  setTimeout(()=>{li[1].className='done';li[1].querySelector('.ck').innerHTML=I.check;$('swd').style.opacity=1;$('swb').disabled=false;
+    S.accepted=S.accepted.filter(x=>x!==id); if(!S.swapped.includes(id)) S.swapped.push(id); save();},2400);
+}
+function openSheet(){$('dim').classList.add('show');$('sheet').classList.add('show');$('dim').onclick=closeSheet}
+function closeSheet(){$('dim').classList.remove('show');$('sheet').classList.remove('show')}
+
+/* timetable */
+function vCal(){
+  $('hdr').innerHTML=`<div class="hello">This week · synced with ${S.uni!==null?UNIS[S.uni].replace('University of Applied Sciences','UAS'):'your university'}</div><div class="h1">Timetable</div>`;
+  const d=S.day;
+  const dayItems=k=>({c:CLASSES.filter(c=>c.d===k),m:SHIFTS.filter(s=>s.d===k&&S.accepted.includes(s.id))});
+  const H0=8,H1=24,PX=46;
+  const cls=CLASSES.filter(c=>c.d===d), mine=SHIFTS.filter(s=>s.d===d&&S.accepted.includes(s.id));
+  const avail=visible().filter(s=>s.d===d&&!S.accepted.includes(s.id));
+  const exam=isExamDay(d)&&S.examPause;
+  // free windows
+  const busy=[...cls,...mine].map(x=>[x.s,x.e]).sort((a,b)=>a[0]-b[0]);
+  let free=[],cur=H0;
+  for(const [a,b] of busy){if(a-cur>=2) free.push([cur,a]);cur=Math.max(cur,b)}
+  if(H1-cur>=2) free.push([cur,H1]);
+  let html=`<div class="days">${DAYS.map((n,k)=>{const it=dayItems(k);return `<button class="day ${k===d?'on':''}" onclick="S.day=${k};save();vCal()">${n}<b>${DATES[k]}</b><div class="dots">${it.c.map(c=>`<i style="background:${c.exam?'#9A8A8E':'#7A1F2B'}"></i>`).join('')}${it.m.map(()=>'<i style="background:#1F6F6A"></i>').join('')}</div></button>`}).join('')}</div>`;
+  html+=`<div class="row" style="margin-bottom:10px"><div style="font-weight:800;font-size:18px">${DAYF[d]}${d===TODAY?' · Today':''}</div><div class="sp"></div>${exam?'<span class="chip g">Exam day · shifts paused</span>':avail.length?`<span class="chip">${avail.length} shift${avail.length>1?'s':''} available</span>`:''}</div>`;
+  html+=`<div class="tl" style="height:${(H1-H0)*PX}px">`;
+  for(let h=H0;h<H1;h+=2) html+=`<div class="hr" style="top:${(h-H0)*PX}px">${fmt(h)}</div><div class="hl" style="top:${(h-H0)*PX}px"></div>`;
+  if(!exam) for(const [a,b] of free){const n=avail.filter(s=>s.s>=a&&s.e<=b).length;
+    html+=`<button class="blk free" style="top:${(a-H0)*PX+3}px;height:${(b-a)*PX-6}px" onclick="S.tab='shifts';S.filter='all';go('shifts')">Free ${fmt(a)}–${b===24?'24:00':fmt(b)}<small>${n?`${n} shift${n>1?'s':''} fit here · tap to view`:'No shifts yet'}</small></button>`;}
+  for(const c of cls) html+=`<div class="blk ${c.exam?'exam':'cls'}" style="top:${(c.s-H0)*PX+3}px;height:${(c.e-c.s)*PX-6}px">${c.t}<small>${fmt(c.s)}–${fmt(c.e)} · ${c.r}</small></div>`;
+  for(const s of mine) html+=`<button class="blk mine" style="top:${(s.s-H0)*PX+3}px;height:${(s.e-s.s)*PX-6}px;text-align:left" onclick="openShift('${s.id}')">${s.ic} ${s.role} · ${s.emp}<small style="color:#fff">${fmt(s.s)}–${fmt(s.e)} · ${eur(pay(s))}</small></button>`;
+  html+='</div>';
+  html+=`<div class="row" style="gap:14px;margin-top:14px;font-size:13px;font-weight:700;color:var(--mut);flex-wrap:wrap"><span class="row" style="gap:5px"><i style="width:14px;height:14px;border-radius:4px;background:#F1DDE1;border-left:4px solid #7A1F2B;display:inline-block"></i>Class</span><span class="row" style="gap:5px"><i style="width:14px;height:14px;border-radius:4px;background:#1F6F6A;display:inline-block"></i>My shift</span><span class="row" style="gap:5px"><i style="width:14px;height:14px;border-radius:4px;border:2px dashed #A8D5CE;display:inline-block"></i>Free time</span></div>`;
+  $('main').innerHTML=html;
+}
+
+/* my shifts */
+function vMine(){
+  $('hdr').innerHTML=`<div class="hello">Upcoming and past work</div><div class="h1">My shifts</div>`;
+  const up=SHIFTS.filter(s=>S.accepted.includes(s.id)).sort((a,b)=>a.d-b.d||a.s-b.s);
+  let html=`<div class="h2" style="margin-top:4px">Upcoming</div>`;
+  html+=up.length?up.map(s=>`<div class="card"><button class="shift" onclick="openShift('${s.id}')"><div class="ico" style="background:var(--tealL)">${s.ic}</div><div style="flex:1"><div class="sh-t">${s.role}</div><div class="sh-e">${s.emp}</div><div class="sh-m"><span class="row" style="gap:4px">${I.clock}${dayLabel(s.d)} · ${fmt(s.s)}–${fmt(s.e)}</span></div></div><div class="sh-pay"><b style="color:var(--teal)">${eur(pay(s))}</b><span>${hrs(s)} h</span></div></button>
+    <button class="btn sec" style="height:44px;margin-top:12px;font-size:15px" onclick="openSwap('${s.id}')">${I.swap}Swap shift</button></div>`).join('')
+    :`<div class="card empty" style="padding:26px 16px">🗓️<b>No upcoming shifts</b>Accept a shift that fits your free time.<button class="btn" style="margin-top:14px;height:46px" onclick="go('shifts')">Find shifts</button></div>`;
+  html+=`<div class="h2">Past shifts</div>`;
+  html+=PAST.map(p=>{const r=S.rated[p.id];return `<div class="card"><div class="shift"><div class="ico" style="background:#EFEAEC">${p.ic}</div><div style="flex:1"><div class="sh-t">${p.role}</div><div class="sh-e">${p.emp} · ${p.when}</div></div><div class="sh-pay"><b style="color:var(--ink)">${eur(p.pay)}</b><span>${p.h} h · paid</span></div></div>
+    ${r?`<div class="row" style="margin-top:10px;font-size:14px;font-weight:700;color:var(--mut)">Your rating: ${stars(r)}</div>`:`<button class="btn sec" style="height:44px;margin-top:12px;font-size:15px" onclick="openRate('${p.id}')">⭐ Rate this employer</button>`}</div>`}).join('');
+  $('main').innerHTML=html;
+}
+let rate={fair:0,paid:0};
+function openRate(id){
+  rate={fair:0,paid:0}; const p=PAST.find(x=>x.id===id); const sh=$('sheet');
+  const draw=()=>{sh.innerHTML=`<div class="grab"></div><div class="h1" style="font-size:23px">Rate ${p.emp}</div>
+   <div class="sub" style="margin:4px 0 16px">Your rating helps other students choose reliable employers.</div>
+   ${[['fair','Fair treatment'],['paid','Paid on time']].map(([k,l])=>`<div style="margin-bottom:16px"><div style="font-weight:800;margin-bottom:6px">${l}</div><div class="row" style="gap:6px">${[1,2,3,4,5].map(n=>`<button data-k="${k}" data-n="${n}" style="font-size:34px;color:${n<=rate[k]?'#E0A100':'#E2D8DB'}">★</button>`).join('')}</div></div>`).join('')}
+   <button class="btn" id="rgo" ${rate.fair&&rate.paid?'':'disabled'}>Submit rating</button><button class="btn ghost" onclick="closeSheet()">Cancel</button>`;
+   sh.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{rate[b.dataset.k]=+b.dataset.n;draw()});
+   $('rgo').onclick=()=>{S.rated[id]=Math.round((rate.fair+rate.paid)/2);save();closeSheet();vMine();toast('Thanks! Your rating is anonymous.')};
+  };
+  draw(); openSheet();
+}
+
+/* earnings */
+function vEarn(){
+  $('hdr').innerHTML=`<div class="hello">Hours and money in one place</div><div class="h1">Earnings</div>`;
+  const up=SHIFTS.filter(s=>S.accepted.includes(s.id));
+  const pH=up.reduce((a,s)=>a+hrs(s),0), pE=up.reduce((a,s)=>a+pay(s),0);
+  const earned=PAST.reduce((a,p)=>a+p.pay,0), eh=PAST.reduce((a,p)=>a+p.h,0);
+  const weeks=[...WEEKS,{w:'This week',h:pH,cur:true}], max=Math.max(S.limit,...weeks.map(w=>w.h));
+  const pct=Math.min(100,pH/S.limit*100), over=pH>S.limit;
+  $('main').innerHTML=`
+   <div class="card" style="background:var(--wine);color:#fff"><div style="font-weight:700;opacity:.85">Earned in November</div><div class="big" style="color:#fff">${eur(earned)}</div><div style="opacity:.85;font-weight:600">${eh} hours · ${PAST.length} shifts · all paid on time</div></div>
+   <div class="card"><div class="row"><div><div style="font-weight:800">Planned this week</div><div class="sub">${up.length} shift${up.length===1?'':'s'} accepted</div></div><div class="sp"></div><div style="text-align:right"><div style="font-size:22px;font-weight:800;color:var(--teal)">${eur(pE)}</div><div class="sub">${pH} h</div></div></div></div>
+   <div class="card"><div class="row" style="margin-bottom:8px"><div style="font-weight:800">Weekly hour limit</div><div class="sp"></div><div class="stepper"><button onclick="S.limit=Math.max(4,S.limit-2);save();vEarn()">−</button>${S.limit} h<button onclick="S.limit=Math.min(40,S.limit+2);save();vEarn()">+</button></div></div>
+     <div class="bar" style="height:12px"><i style="width:${pct}%;background:${over?'#C62828':'var(--teal)'}"></i></div>
+     <div class="sub" style="margin-top:8px">${over?`⚠️ You planned ${pH} h, which is more than your limit of ${S.limit} h.`:`${pH} of ${S.limit} h planned. ShiftMate warns you before you go over your limit.`}</div></div>
+   <div class="card"><div style="font-weight:800">Hours per week</div>
+     <div class="cols">${weeks.map(w=>`<div class="${w.cur?'cur':''}"><i style="height:${Math.max(4,w.h/max*100)}px"></i>${w.w}<br><b style="color:var(--ink)">${w.h} h</b></div>`).join('')}</div></div>`;
+}
+
+/* profile */
+let syncing=false;
+function vMe(){
+  $('hdr').innerHTML=`<div class="hello">Settings</div><div class="h1">Profile</div>`;
+  const u=S.uni!==null?UNIS[S.uni]:'Not connected';
+  $('main').innerHTML=`
+   <div class="card row" style="gap:14px"><div style="width:58px;height:58px;border-radius:50%;background:var(--wine);color:#fff;font-weight:800;font-size:26px;display:flex;align-items:center;justify-content:center">M</div><div><div style="font-weight:800;font-size:19px">Max</div><div class="sub">Master's student · verified ✓</div></div></div>
+   <div class="card"><div style="font-weight:800;margin-bottom:4px">University timetable</div><div class="sub">${u}</div>
+     <div class="row" style="margin-top:10px"><span class="chip">${I.checkT}${syncing?'Syncing…':'Synced just now'}</span><div class="sp"></div><button class="fchip" onclick="syncNow()">Sync now</button></div></div>
+   <div class="card" style="padding-top:4px;padding-bottom:4px">
+     <div class="set"><div style="flex:1"><b>Exam pause</b><span>No shift suggestions on exam days</span></div><button class="toggle ${S.examPause?'on':''}" onclick="S.examPause=!S.examPause;save();vMe();toast(S.examPause?'Exam pause on: no shifts on exam days':'Exam pause off')"></button></div>
+     <div class="set"><div style="flex:1"><b>Urgent shift alerts</b><span>Get notified about last-minute shifts with a higher hourly rate</span></div><button class="toggle ${S.alerts?'on':''}" onclick="S.alerts=!S.alerts;save();vMe()"></button></div>
+   </div>
+   <div class="card" style="background:linear-gradient(135deg,#7A1F2B,#9B2C3A);color:#fff"><div style="font-weight:800;font-size:18px">ShiftMate Plus</div><div style="opacity:.9;margin:4px 0 12px;line-height:1.35">Get early access to urgent, higher-paid shifts before other students.</div>
+     <button class="btn" style="background:#fff;color:var(--wine);height:46px" onclick="S.plus=true;save();vMe();toast('You are on the Plus waitlist 🎉')">${S.plus?'On the waitlist ✓':'Join the waitlist'}</button></div>
+   <button class="btn ghost" onclick="resetDemo()">Reset demo</button>
+   <div class="foot">ShiftMate prototype for a university research project.<br>All employers, shifts and ratings are demo data.</div>`;
+}
+function syncNow(){syncing=true;vMe();setTimeout(()=>{syncing=false;vMe();toast('Timetable updated: no changes this week')},1300)}
+function resetDemo(){try{localStorage.removeItem('shiftmate')}catch(e){} S=Object.assign({},DEF);obStep=0;obUni=null;closePage();closeSheet();renderOB();render()}
+
+/* ---------- start ---------- */
+renderOB(); render();
+if(S.onboarded) setTimeout(urgentAlert,800);
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>
